@@ -1,4 +1,11 @@
-import { Typography, TextField, Box, Button } from "@mui/material";
+import {
+  Typography,
+  TextField,
+  Box,
+  Button,
+  Container,
+  Paper,
+} from "@mui/material";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useState, useEffect } from "react";
@@ -12,6 +19,7 @@ import { updatePost, getPost, getTopics } from "../../utils/api";
 import { useCookies } from "react-cookie";
 import { getUserToken, isUserLoggedIn } from "../../utils/api_user";
 import { InputLabel, MenuItem, FormControl, Select } from "@mui/material";
+import { ArrowBack, Edit, Save } from "@mui/icons-material";
 
 function PostEdit() {
   const { id } = useParams();
@@ -47,7 +55,14 @@ function PostEdit() {
     event.preventDefault();
     // check for error
     if (!title || !description || !topic) {
-      Swal.fire("Please fill out all the required fields");
+      Swal.fire({
+        title: "Missing Information",
+        text: "Please fill out all the required fields",
+        icon: "warning",
+        background: "#1E1E1E",
+        color: "#E1E1E1",
+        confirmButtonColor: "#BB86FC",
+      });
     } else {
       // trigger the API
       const updatedPost = await updatePost(
@@ -55,84 +70,232 @@ function PostEdit() {
         title,
         description,
         topic,
-        token
+        token,
       );
 
       if (updatedPost) {
-        Swal.fire("Product has been edited successfully!");
+        Swal.fire({
+          title: "Success!",
+          text: "Post has been updated successfully!",
+          icon: "success",
+          background: "#1E1E1E",
+          color: "#E1E1E1",
+          confirmButtonColor: "#BB86FC",
+          timer: 1500,
+        });
         navigate("/");
       }
     }
   };
 
   return (
-    <>
+    <Box sx={{ minHeight: "100vh", backgroundColor: "background.default" }}>
       <Header />
-      <Card>
-        <CardContent>
-          <Button variant="h5" mb={4} LinkComponent={Link} to="/">
-            Back
+      <Container maxWidth="md" sx={{ paddingY: 4 }}>
+        {/* Header Section */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 4,
+            flexWrap: "wrap",
+            gap: 2,
+          }}
+        >
+          <Box>
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 700,
+                background: "linear-gradient(45deg, #BB86FC 30%, #03DAC6 90%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                marginBottom: 1,
+              }}
+            >
+              ✏️ Edit Post
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Update your post information
+            </Typography>
+          </Box>
+          <Button
+            component={Link}
+            to="/"
+            variant="outlined"
+            startIcon={<ArrowBack />}
+            sx={{
+              borderRadius: 2,
+              padding: "10px 24px",
+              fontWeight: 600,
+              borderColor: "#BB86FC",
+              color: "#BB86FC",
+              "&:hover": {
+                borderColor: "#E7B9FF",
+                background: "rgba(187, 134, 252, 0.1)",
+              },
+            }}
+          >
+            Back to Home
           </Button>
-          <Typography variant="h4" align="center" mb={4}>
-            Edit Post
-          </Typography>
-          <Box mb={2}>
-            <TextField
-              label="Title"
-              required
-              fullWidth
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-            />
-          </Box>
-          <Box mb={2}>
-            <TextField
-              label="Description"
-              required
-              fullWidth
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-            />
-          </Box>
-          <Box mb={2}>
-            <FormControl sx={{ minWidth: "100%" }}>
-              <InputLabel id="demo-simple-select-label">Topic</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={topic}
-                label="topic"
-                onChange={(event) => {
-                  console.log(event.target.value);
-                  setTopic(event.target.value);
-                }}
-                sx={{
-                  width: "100%",
-                }}
-              >
-                {topics.map((topic) => {
-                  return <MenuItem value={topic._id}>{topic.name}</MenuItem>;
-                })}
-              </Select>
-            </FormControl>
+        </Box>
+
+        {/* Form Card */}
+        <Paper
+          elevation={3}
+          sx={{
+            padding: { xs: 3, sm: 4, md: 5 },
+            background: "linear-gradient(135deg, #1E1E1E 0%, #2D2D2D 100%)",
+            border: "1px solid rgba(187, 134, 252, 0.2)",
+            borderRadius: 3,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+              marginBottom: 4,
+            }}
+          >
+            <Box
+              sx={{
+                width: 56,
+                height: 56,
+                borderRadius: "50%",
+                background: "linear-gradient(45deg, #BB86FC 30%, #03DAC6 90%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 4px 20px rgba(187, 134, 252, 0.4)",
+              }}
+            >
+              <Edit sx={{ fontSize: 32, color: "#000" }} />
+            </Box>
+            <Typography variant="h5" sx={{ fontWeight: 700 }}>
+              Post Details
+            </Typography>
           </Box>
 
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={handleFormSubmit}
-          >
-            Update
-          </Button>
-        </CardContent>
-      </Card>
+          <Box component="form" onSubmit={handleFormSubmit}>
+            <Box sx={{ marginBottom: 3 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{ marginBottom: 1, color: "#BB86FC", fontWeight: 600 }}
+              >
+                Post Title *
+              </Typography>
+              <TextField
+                required
+                fullWidth
+                placeholder="Enter post title..."
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    background: "rgba(187, 134, 252, 0.05)",
+                    fontSize: "1.1rem",
+                  },
+                }}
+              />
+            </Box>
+
+            <Box sx={{ marginBottom: 3 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{ marginBottom: 1, color: "#BB86FC", fontWeight: 600 }}
+              >
+                Description *
+              </Typography>
+              <TextField
+                required
+                fullWidth
+                multiline
+                rows={6}
+                placeholder="Update your post description..."
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    background: "rgba(187, 134, 252, 0.05)",
+                  },
+                }}
+              />
+            </Box>
+
+            <Box sx={{ marginBottom: 4 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{ marginBottom: 1, color: "#BB86FC", fontWeight: 600 }}
+              >
+                Topic *
+              </Typography>
+              <FormControl fullWidth>
+                <Select
+                  value={topic}
+                  onChange={(event) => {
+                    setTopic(event.target.value);
+                  }}
+                  sx={{
+                    background: "rgba(187, 134, 252, 0.05)",
+                  }}
+                >
+                  {topics.map((topicItem) => {
+                    return (
+                      <MenuItem key={topicItem._id} value={topicItem._id}>
+                        #{topicItem.name}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                paddingTop: 3,
+                borderTop: "1px solid rgba(187, 134, 252, 0.1)",
+              }}
+            >
+              <Button
+                component={Link}
+                to="/"
+                variant="outlined"
+                fullWidth
+                sx={{
+                  padding: "14px",
+                  fontWeight: 600,
+                  fontSize: "1rem",
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                startIcon={<Save />}
+                sx={{
+                  padding: "14px",
+                  fontWeight: 600,
+                  fontSize: "1rem",
+                }}
+              >
+                Save Changes
+              </Button>
+            </Box>
+          </Box>
+        </Paper>
+      </Container>
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
       >
         <CircularProgress color="inherit" />
       </Backdrop>
-    </>
+    </Box>
   );
 }
 

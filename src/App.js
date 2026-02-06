@@ -1,5 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CookiesProvider } from "react-cookie";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import { darkTheme } from "./theme";
 import "./App.css";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -13,23 +16,26 @@ import AdminPosts from "./pages/AllPost";
 
 function App() {
   return (
-    <div className="App">
-      <CookiesProvider defaultSetOptions={{ path: "/" }}>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/posts/new" element={<PostAddNew />} />
-            <Route path="/posts/:id/edit" element={<PostEdit />} />
-            <Route path="/topics/new" element={<TopicAddNew />} />
-            <Route path="/topics/:id/edit" element={<TopicEdit />} />
-            <Route path="/bookmark" element={<BookmarkPage />} />
-            <Route path="/adminPosts" element={<AdminPosts />} />
-          </Routes>
-        </BrowserRouter>
-      </CookiesProvider>
-    </div>
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <div className="App">
+        <CookiesProvider defaultSetOptions={{ path: "/" }}>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/posts/new" element={<PostAddNew />} />
+              <Route path="/posts/:id/edit" element={<PostEdit />} />
+              <Route path="/topics/new" element={<TopicAddNew />} />
+              <Route path="/topics/:id/edit" element={<TopicEdit />} />
+              <Route path="/bookmark" element={<BookmarkPage />} />
+              <Route path="/adminPosts" element={<AdminPosts />} />
+            </Routes>
+          </BrowserRouter>
+        </CookiesProvider>
+      </div>
+    </ThemeProvider>
   );
 }
 
